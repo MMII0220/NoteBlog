@@ -6,19 +6,19 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var db *sqlx.DB
+// var db *sqlx.DB
 
-func StartDBConnection() error {
-	var err error
+func StartDBConnection() (*sqlx.DB, error) {
+	// var err error
 	connStr := "host=localhost port=5432 user=postgres dbname=test password=1234 sslmode=disable"
-	db, err = sqlx.Connect("postgres", connStr)
+	db, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
-		return fmt.Errorf("error in connecting to db: %v", err)
+		return nil, fmt.Errorf("error in connecting to db: %v", err)
 	}
-	return nil
+	return db, nil
 }
 
-func CloseDB() error {
+func CloseDB(db *sqlx.DB) error {
 	if db != nil {
 		err := db.Close()
 		if err != nil {
@@ -28,6 +28,6 @@ func CloseDB() error {
 	return nil
 }
 
-func GetDBConnection() *sqlx.DB {
-	return db
-}
+// func GetDBConnection() *sqlx.DB {
+// 	return db
+// }

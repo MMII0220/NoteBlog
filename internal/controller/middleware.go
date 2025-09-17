@@ -1,15 +1,15 @@
-package middleware
+package controller
 
 import (
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"myasd/internal/service"
+	// "myasd/internal/service"
 )
 
 // AuthMiddleware проверяет Access Token
-func AuthMiddleware() gin.HandlerFunc {
+func (contr *ControllerStruct) authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Получаем токен из заголовка
 		authHeader := c.GetHeader("Authorization")
@@ -29,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		token := tokenParts[1]
 
 		// Проверяем токен
-		userID, err := service.ValidateAccessToken(token)
+		userID, err := contr.ValidateAccessToken(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 			c.Abort()

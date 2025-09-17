@@ -9,7 +9,7 @@ var accessSecret = []byte("access_secret")
 var refreshSecret = []byte("refresh_secret")
 
 // GenerateTokens генерирует Access и Refresh токены
-func GenerateTokens(userID int) (accessToken, refreshToken string, err error) {
+func (s *ServiceStruct) GenerateTokens(userID int) (accessToken, refreshToken string, err error) {
 	// Access Token (живет 1 минуту)
 	accessClaims := jwt.MapClaims{
 		"user_id": userID,
@@ -32,7 +32,7 @@ func GenerateTokens(userID int) (accessToken, refreshToken string, err error) {
 }
 
 // ValidateAccessToken проверяет access token
-func ValidateAccessToken(tokenStr string) (userID int, err error) {
+func (s *ServiceStruct) ValidateAccessToken(tokenStr string) (userID int, err error) {
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		return accessSecret, nil
 	})
@@ -46,7 +46,7 @@ func ValidateAccessToken(tokenStr string) (userID int, err error) {
 }
 
 // ValidateRefreshToken проверяет refresh token
-func ValidateRefreshToken(tokenStr string) (userID int, err error) {
+func (s *ServiceStruct) ValidateRefreshToken(tokenStr string) (userID int, err error) {
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		return refreshSecret, nil
 	})

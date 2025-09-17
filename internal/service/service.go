@@ -1,14 +1,15 @@
 package service
 
 import (
-	"myasd/internal/models"
 	"myasd/internal/repository"
 )
 
-func GetAllArticles(userID int) ([]models.Article, error) {
-	return repository.GetAllArticles(userID)
+type ServiceStruct struct {
+	repo *repository.RepositoryStruct
 }
 
-func CreateArticle(input models.Article) error {
-	return repository.CreateArticle(input)
+func NewService(r *repository.RepositoryStruct) *ServiceStruct {
+	return &ServiceStruct{
+		repo: r,
+	}
 }

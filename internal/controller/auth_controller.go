@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"myasd/internal/models"
-	"myasd/internal/service"
+	// "myasd/internal/service"
 	// "myasd/internal/service"
 	"net/http"
 )
@@ -19,7 +19,7 @@ import (
 // @Failure      400   {object}  map[string]string
 // @Failure      500   {object}  map[string]string
 // @Router       /signup [post]
-func signUp(c *gin.Context) {
+func (contr *ControllerStruct) signUp(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -28,7 +28,7 @@ func signUp(c *gin.Context) {
 		return
 	}
 
-	err := service.CreateUser(user)
+	err := contr.serv.CreateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -58,7 +58,7 @@ type SignInRequest struct {
 // @Failure      400          {object}  map[string]string
 // @Failure      404          {object}  map[string]string
 // @Router       /signin [post]
-func signIn(c *gin.Context) {
+func (contr *ControllerStruct) signIn(c *gin.Context) {
 	var user SignInRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -67,7 +67,7 @@ func signIn(c *gin.Context) {
 		return
 	}
 
-	tokens, err := service.GetUser(user.Login, user.Password)
+	tokens, err := contr.serv.GetUser(user.Login, user.Password)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": err.Error(),
@@ -95,7 +95,7 @@ type RefreshTokenRequest struct {
 // @Failure      400    {object}  map[string]string
 // @Failure      401    {object}  map[string]string
 // @Router       /refresh [post]
-func RefreshToken(c *gin.Context) {
+func (contr *ControllerStruct) RefreshToken(c *gin.Context) {
 	var input RefreshTokenRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -104,7 +104,7 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
-	access, err := service.RefreshToken(input.RefreshToken)
+	access, err := contr.serv.RefreshToken(input.RefreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),

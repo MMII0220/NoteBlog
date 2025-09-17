@@ -5,11 +5,13 @@ import (
 )
 
 type Article struct {
-	ID        int       `json:"id" db:"id"`
-	Name      string    `json:"name" db:"name"`
-	Content   string    `json:"content" db:"content"`
-	UserID    int       `json:"user_id" db:"user_id"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	ID        int        `json:"id" db:"id"`
+	Name      string     `json:"name" db:"name"`
+	Content   string     `json:"content" db:"content"`
+	UserID    int        `json:"user_id" db:"user_id"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
 type User struct {
