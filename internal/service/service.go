@@ -1,15 +1,14 @@
 package service
 
 import (
+	"myasd/internal/contracts"
 	"myasd/internal/repository"
 )
 
 type ServiceStruct struct {
-	repo *repository.RepositoryStruct
+	repo contracts.RepositoryI
 }
 
 func NewService(r *repository.RepositoryStruct) *ServiceStruct {
-	return &ServiceStruct{
-		repo: r,
-	}
+	return &ServiceStruct{repo: r}
 }

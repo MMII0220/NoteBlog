@@ -24,6 +24,9 @@ func (contr *ControllerStruct) StartRoute() error {
 	{
 		auth.GET("/", contr.getAllArticles) // только для авторизованных
 		auth.POST("/", contr.createArticle)
+		auth.POST("/", contr.getArticleByID)
+		auth.GET("/", contr.PatchArticle) // только для авторизованных
+		auth.POST("/", contr.deleteArticle)
 	}
 
 	r.GET("/ping", contr.ping)

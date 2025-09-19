@@ -88,6 +88,16 @@ func (contr *ControllerStruct) createArticle(c *gin.Context) {
 	})
 }
 
+// @Summary Get all articles of the user
+// @Description Returns articles of the authenticated user
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Article
+// @Failure 500 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /articles [get]
+// @Security BearerAuth
 func (contr *ControllerStruct) getArticleByID(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -119,43 +129,19 @@ func (contr *ControllerStruct) getArticleByID(c *gin.Context) {
 	})
 }
 
-// func (contr *ControllerStruct) updateArticle(c *gin.Context) {
-// 	userID, exists := c.Get("user_id")
-// 	if !exists {
-// 		c.JSON(http.StatusUnauthorized, gin.H{
-// 			"error": "unauthorized",
-// 		})
-// 		return
-// 	}
-// 	id, ok := userID.(int)
-// 	if !ok {
-// 		c.JSON(http.StatusInternalServerError, gin.H{
-// 			"error": "invalid user id type",
-// 		})
-// 		return
-// 	}
-
-// 	articleID, err := c.Param("id")
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"error": "invalid id body",
-// 		})
-// 		return
-// 	}
-
-// 	article, err := contr.serv.UpdateArticle(id, articleID)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"message": article,
-// 	})
-// }
-
+// PatchArticle godoc
+// @Summary Update an article
+// @Description Update fields of an article. JSON body must contain fields to update.
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param id path string true "Article ID"
+// @Param body body map[string]interface{} true "Fields to update"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles/{id} [patch]
 func (ctr *ControllerStruct) PatchArticle(c *gin.Context) {
 	userIDInterface, exists := c.Get("user_id")
 	if !exists {
@@ -185,6 +171,18 @@ func (ctr *ControllerStruct) PatchArticle(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "article updated"})
 }
 
+// DeleteArticle godoc
+// @Summary Delete an article
+// @Description Delete an article by ID for the authenticated user
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param id path string true "Article ID"
+// @Success 204 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles/{id} [delete]
 func (contr *ControllerStruct) deleteArticle(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {

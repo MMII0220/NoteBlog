@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"myasd/internal/contracts"
 	"myasd/internal/service"
 )
 
 type ControllerStruct struct {
-	serv *service.ServiceStruct
+	serv contracts.ServiceI
 }
 
 func NewController(s *service.ServiceStruct) *ControllerStruct {
