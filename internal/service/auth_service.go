@@ -1,14 +1,24 @@
 package service
 
 import (
-	"errors"
+	// "errors"
 	"golang.org/x/crypto/bcrypt"
 	// "myasd/internal/repository"
 	// "myasd/internal/controller"
+	"myasd/internal/errs"
 	"myasd/internal/models"
 )
 
 func (s *ServiceStruct) CreateUser(user models.User) error {
+	_, err := s.GetUser(user.Login, user.Password)
+	if err != nil {
+		return errs.ErrUserNotExists
+	}
+
+	if user.ID != 0 {
+		return errs.ErrUsernameAlreadyExists
+	}
+
 	// хешируем пароль
 	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -21,12 +31,12 @@ func (s *ServiceStruct) CreateUser(user models.User) error {
 func (s *ServiceStruct) GetUser(login, password string) (models.TokenResponse, error) {
 	user, err := s.repo.GetUserByLogin(login)
 	if err != nil {
-		return models.TokenResponse{}, errors.New("invalid login")
+		return models.TokenResponse{}, errs.ErrUserNotExists
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return models.TokenResponse{}, errors.New("invalid password")
+		return models.TokenResponse{}, errs.ErrIncorrectLoginOrPassword
 	}
 
 	access, refresh, err := s.GenerateTokens(user.ID)
@@ -43,7 +53,7 @@ func (s *ServiceStruct) GetUser(login, password string) (models.TokenResponse, e
 func (s *ServiceStruct) RefreshToken(refreshToken string) (string, error) {
 	userID, err := s.ValidateRefreshToken(refreshToken)
 	if err != nil {
-		return "", errors.New("invalid refresh token")
+		return "", errs.ErrIncorrectRefreshToken
 	}
 
 	access, _, err := s.GenerateTokens(userID)

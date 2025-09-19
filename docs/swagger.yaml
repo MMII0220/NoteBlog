@@ -1,4 +1,9 @@
 definitions:
+  controller.CommonError:
+    properties:
+      error:
+        type: string
+    type: object
   controller.RefreshTokenRequest:
     properties:
       refresh_token:
@@ -61,15 +66,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.CommonError'
       security:
       - BearerAuth: []
       summary: Get all articles of the user
@@ -149,6 +146,36 @@ paths:
               type: string
             type: object
       summary: Delete an article
+      tags:
+      - articles
+    get:
+      consumes:
+      - application/json
+      description: Returns articles of the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Article'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get all articles of the user
       tags:
       - articles
     patch:

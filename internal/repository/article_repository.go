@@ -12,16 +12,16 @@ func (r *RepositoryStruct) GetAllArticles(userID int) ([]models.Article, error) 
 	query := `select id, name, content, created_at from articles where user_id=$1`
 	err := r.db.Select(&input, query, userID)
 	if err != nil {
-		return []models.Article{}, fmt.Errorf("error in select query for database %v", err)
+		return []models.Article{}, r.translateError(err)
 	}
-	return input, err
+	return input, nil
 }
 
 func (r *RepositoryStruct) CreateArticle(input models.Article) error {
 	query := `insert into articles (name, content, user_id) values($1, $2, $3)`
 	_, err := r.db.Exec(query, input.Name, input.Content, input.UserID)
 	if err != nil {
-		return fmt.Errorf("error in query request insert into %v: ", err)
+		return r.translateError(err)
 	}
 	return nil
 }
@@ -38,7 +38,7 @@ func (r *RepositoryStruct) GetArticleByID(id int) (models.Article, error) {
 
 	err := r.db.Get(&article, query, id)
 	if err != nil {
-		return models.Article{}, err
+		return models.Article{}, r.translateError(err)
 	}
 	return article, nil
 }
@@ -74,21 +74,27 @@ func (r *RepositoryStruct) PatchArticle(id int, articleID string, updates map[st
 
 	// выполняем
 	_, err := r.db.Exec(query, args...)
-	return err
+	if err != nil {
+		return r.translateError(err)
+	}
+	return nil
 }
 
 func (r *RepositoryStruct) DeleteArticle(id int, articleID string) error {
 	query := "UPDATE articles SET deleted_at = NOW() WHERE id = $1"
 
-	result, err := r.db.Exec(query, id)
+	_, err := r.db.Exec(query, id)
 	if err != nil {
-		return err
+		return r.translateError(err)
 	}
 
-	_, err = result.RowsAffected()
-	if err != nil {
-		return err
-	}
+	// rows, err := res.RowsAffected()
+	// if err != nil {
+	// 	return err
+	// }
+	// if rows == 0 {
+	// 	return r.tranlsateError(err)
+	// }
 
 	return nil
 }

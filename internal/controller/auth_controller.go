@@ -5,6 +5,8 @@ import (
 	"myasd/internal/models"
 	// "myasd/internal/service"
 	// "myasd/internal/service"
+	"errors"
+	"myasd/internal/errs"
 	"net/http"
 )
 
@@ -22,23 +24,22 @@ import (
 func (contr *ControllerStruct) signUp(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "error in request body",
-		})
+		contr.handleError(c, errors.Join(errs.ErrInvalidRequestBody, err))
+		return
+	}
+
+	if user.FullName == "" || user.Login == "" || user.Password == "" {
+		contr.handleError(c, errs.ErrFillRequiredFields)
 		return
 	}
 
 	err := contr.serv.CreateUser(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		contr.handleError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": user,
-	})
+	c.JSON(http.StatusCreated, CommonReponse{"User created successfully!"})
 }
 
 // SignInRequest описывает тело запроса для входа

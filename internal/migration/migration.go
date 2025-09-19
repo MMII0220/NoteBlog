@@ -14,7 +14,7 @@ const (
 		full_name varchar(255) null,
 		login varchar(255) not null,
 		password varchar(255) not null,
-		created_at timestamp default current_timestamp,
+		created_at timestamp default current_timestamp
 	);`
 	TableArticles = `create table if not exists articles (
 		id serial primary key,
