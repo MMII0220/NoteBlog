@@ -6,16 +6,19 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog"
 	"myasd/internal/errs"
 )
 
 type RepositoryStruct struct {
-	db *sqlx.DB
+	db     *sqlx.DB
+	logger zerolog.Logger
 }
 
-func NewRepository(db *sqlx.DB) *RepositoryStruct {
+func NewRepository(db *sqlx.DB, logger zerolog.Logger) *RepositoryStruct {
 	return &RepositoryStruct{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

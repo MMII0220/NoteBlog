@@ -14,6 +14,8 @@ func (contr *ControllerStruct) StartRoute() error {
 
 	// Swagger endpoint
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//Loggirovanie
+	r.Use(contr.LoggerMiddleware())
 
 	r.POST("/signup", contr.signUp)
 	r.POST("/signin", contr.signIn)

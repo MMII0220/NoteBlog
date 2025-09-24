@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	// "myasd/internal/service"
@@ -49,5 +50,25 @@ func (contr *ControllerStruct) authMiddleware() gin.HandlerFunc {
 		// Кладём userID в контекст
 		c.Set("user_id", userID)
 		c.Next()
+	}
+}
+
+func (contr *ControllerStruct) LoggerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		path := c.Request.URL.Path
+		method := c.Request.Method
+
+		c.Next()
+
+		status := c.Writer.Status()
+		duration := time.Since(start)
+
+		contr.logger.Info().
+			Str("method", method).
+			Str("path", path).
+			Int("status", status).
+			Dur("latency", duration).
+			Msg("handled request")
 	}
 }

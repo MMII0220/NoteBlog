@@ -8,15 +8,18 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type ControllerStruct struct {
-	serv contracts.ServiceI
+	serv   contracts.ServiceI
+	logger zerolog.Logger
 }
 
-func NewController(s *service.ServiceStruct) *ControllerStruct {
+func NewController(s *service.ServiceStruct, logger zerolog.Logger) *ControllerStruct {
 	return &ControllerStruct{
-		serv: s,
+		serv:   s,
+		logger: logger,
 	}
 }
 
