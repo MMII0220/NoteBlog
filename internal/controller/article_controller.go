@@ -1,12 +1,15 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"myasd/internal/errs"
 	"myasd/internal/models"
+
+	"github.com/gin-gonic/gin"
+
 	// "myasd/internal/service"
 	"errors"
 	"net/http"
+	"strconv"
 )
 
 // @Summary Get all articles of the user
@@ -78,7 +81,7 @@ func (contr *ControllerStruct) createArticle(c *gin.Context) {
 		contr.handleError(c, err)
 		return
 	}
-	c.JSON(http.StatusCreated, CommonReponse{"article created successfully"})
+	c.JSON(http.StatusCreated, CommonResponse{"article created successfully"})
 }
 
 // @Summary Get all articles of the user
@@ -86,6 +89,7 @@ func (contr *ControllerStruct) createArticle(c *gin.Context) {
 // @Tags articles
 // @Accept json
 // @Produce json
+// @Param id path int true "Article ID"
 // @Success 200 {array} models.Article
 // @Failure 500 {object} map[string]string
 // @Failure 401 {object} map[string]string
@@ -99,9 +103,9 @@ func (contr *ControllerStruct) getArticleByID(c *gin.Context) {
 	}
 	id := userID.(int)
 
-	articleID := c.Param("id")
-
-	if id < 1 {
+	articleIDStr := c.Param("id")
+	articleID, err := strconv.Atoi(articleIDStr)
+	if err != nil || articleID < 1 {
 		contr.handleError(c, errs.ErrInvalidPathParam)
 		return
 	}
@@ -130,6 +134,7 @@ func (contr *ControllerStruct) getArticleByID(c *gin.Context) {
 // @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /articles/{id} [patch]
+// @Security BearerAuth
 func (contr *ControllerStruct) PatchArticle(c *gin.Context) {
 	userIDInterface, exists := c.Get("user_id")
 	if !exists {
@@ -165,12 +170,13 @@ func (contr *ControllerStruct) PatchArticle(c *gin.Context) {
 // @Tags articles
 // @Accept json
 // @Produce json
-// @Param id path string true "Article ID"
+// @Param id path int true "Article ID"
 // @Success 204 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /articles/{id} [delete]
+// @Security BearerAuth
 func (contr *ControllerStruct) deleteArticle(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -179,14 +185,14 @@ func (contr *ControllerStruct) deleteArticle(c *gin.Context) {
 	}
 	id := userID.(int)
 
-	articleID := c.Param("id")
-
-	if id < 1 {
+	articleIDStr := c.Param("id")
+	articleID, err := strconv.Atoi(articleIDStr)
+	if err != nil || articleID < 1 {
 		contr.handleError(c, errs.ErrInvalidPathParam)
 		return
 	}
 
-	err := contr.serv.DeleteArticle(id, articleID)
+	err = contr.serv.DeleteArticle(id, articleIDStr)
 	if err != nil {
 		contr.handleError(c, err)
 		return

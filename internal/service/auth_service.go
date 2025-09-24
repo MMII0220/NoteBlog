@@ -10,9 +10,11 @@ import (
 )
 
 func (s *ServiceStruct) CreateUser(user models.User) error {
-	_, err := s.GetUser(user.Login, user.Password)
-	if err != nil {
-		return errs.ErrUserNotExists
+	// Проверяем, существует ли уже пользователь с таким логином
+	_, err := s.repo.GetUserByLogin(user.Login)
+	if err == nil {
+		// Если пользователь найден, возвращаем ошибку
+		return errs.ErrUsernameAlreadyExists
 	}
 
 	if user.ID != 0 {

@@ -3,9 +3,11 @@ package service
 import (
 	"myasd/internal/errs"
 	"myasd/internal/models"
+
 	// "myasd/internal/repository"
 	"database/sql"
 	"errors"
+	"strconv"
 )
 
 func (s *ServiceStruct) GetAllArticles(userID int) ([]models.Article, error) {
@@ -16,8 +18,8 @@ func (s *ServiceStruct) CreateArticle(input models.Article) error {
 	return s.repo.CreateArticle(input)
 }
 
-func (s *ServiceStruct) GetArticleByID(id int, articleID string) (models.Article, error) {
-	article, err := s.repo.GetArticleByID(id)
+func (s *ServiceStruct) GetArticleByID(userID int, articleID int) (models.Article, error) {
+	article, err := s.repo.GetArticleByID(userID, articleID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// return models.Article{}, s.repo.translateError(err)
@@ -33,7 +35,12 @@ func (s *ServiceStruct) PatchArticle(userID int, articleID string, updates map[s
 		return errors.New("no fields to update")
 	}
 
-	_, err := s.repo.GetArticleByID(userID)
+	articleIDInt, err := strconv.Atoi(articleID)
+	if err != nil {
+		return errs.ErrArticleNotFound
+	}
+
+	_, err = s.repo.GetArticleByID(userID, articleIDInt)
 	if err != nil {
 		return errs.ErrArticleNotFound
 	}
@@ -41,11 +48,16 @@ func (s *ServiceStruct) PatchArticle(userID int, articleID string, updates map[s
 	return s.repo.PatchArticle(userID, articleID, updates)
 }
 
-func (s *ServiceStruct) DeleteArticle(id int, articleID string) error {
-	_, err := s.repo.GetArticleByID(id)
+func (s *ServiceStruct) DeleteArticle(userID int, articleID string) error {
+	articleIDInt, err := strconv.Atoi(articleID)
 	if err != nil {
 		return errs.ErrArticleNotFound
 	}
 
-	return s.repo.DeleteArticle(id, articleID)
+	_, err = s.repo.GetArticleByID(userID, articleIDInt)
+	if err != nil {
+		return errs.ErrArticleNotFound
+	}
+
+	return s.repo.DeleteArticle(userID, articleID)
 }

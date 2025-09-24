@@ -13,11 +13,10 @@ var (
 
 	ErrUsernameAlreadyExists    = errors.New("username already exists")
 	ErrIncorrectLoginOrPassword = errors.New("incorrect login or password")
-	ErrFillRequiredFilelds      = errors.New("please fill in all required fields")
+	ErrFillRequiredFields       = errors.New("please fill in all required fields")
 
 	ErrIncorrectRefreshToken = errors.New("incorrect refresh token")
 
 	ErrInvalidRequestBody = errors.New("invalid request body")
 	ErrInvalidPathParam   = errors.New("invalid path param")
-	ErrFillRequiredFields = errors.New("fill required fields")
 )

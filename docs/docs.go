@@ -129,6 +129,15 @@ const docTemplate = `{
                     "articles"
                 ],
                 "summary": "Get all articles of the user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -160,6 +169,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete an article by ID for the authenticated user",
                 "consumes": [
                     "application/json"
@@ -173,7 +187,7 @@ const docTemplate = `{
                 "summary": "Delete an article",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Article ID",
                         "name": "id",
                         "in": "path",
@@ -220,6 +234,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update fields of an article. JSON body must contain fields to update.",
                 "consumes": [
                     "application/json"
@@ -474,6 +493,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "login": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

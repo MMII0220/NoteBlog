@@ -1,8 +1,10 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"myasd/internal/models"
+
+	"github.com/gin-gonic/gin"
+
 	// "myasd/internal/service"
 	// "myasd/internal/service"
 	"errors"
@@ -39,13 +41,13 @@ func (contr *ControllerStruct) signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, CommonReponse{"User created successfully!"})
+	c.JSON(http.StatusCreated, CommonResponse{"User created successfully!"})
 }
 
 // SignInRequest описывает тело запроса для входа
 type SignInRequest struct {
 	Login    string `json:"login"`
-	Password string `json:"-"`
+	Password string `json:"password"`
 }
 
 // signIn godoc
@@ -62,22 +64,19 @@ type SignInRequest struct {
 func (contr *ControllerStruct) signIn(c *gin.Context) {
 	var user SignInRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "error bad request body",
-		})
+		contr.handleError(c, errors.Join(errs.ErrInvalidRequestBody, err))
 		return
 	}
 
 	tokens, err := contr.serv.GetUser(user.Login, user.Password)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
-		})
+		contr.handleError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": tokens,
+		"access_token":  tokens.AccessToken,
+		"refresh_token": tokens.RefreshToken,
 	})
 }
 

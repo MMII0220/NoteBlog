@@ -2,11 +2,12 @@ package controller
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"myasd/internal/contracts"
 	"myasd/internal/errs"
 	"myasd/internal/service"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ControllerStruct struct {
@@ -21,7 +22,7 @@ func NewController(s *service.ServiceStruct) *ControllerStruct {
 
 func (ctrl *ControllerStruct) handleError(c *gin.Context, err error) {
 	switch {
-	case errors.Is(err, errs.ErrNotFound) || errors.Is(err, errs.ErrArticleNotFound):
+	case errors.Is(err, errs.ErrNotFound) || errors.Is(err, errs.ErrArticleNotFound) || errors.Is(err, errs.ErrUserNotExists):
 		c.JSON(http.StatusNotFound, CommonError{Error: err.Error()})
 	case errors.Is(err, errs.ErrInvalidRequestBody) ||
 		errors.Is(err, errs.ErrUsernameAlreadyExists) ||

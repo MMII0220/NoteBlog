@@ -13,6 +13,8 @@ definitions:
     properties:
       login:
         type: string
+      password:
+        type: string
     type: object
   models.Article:
     properties:
@@ -117,7 +119,7 @@ paths:
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -145,6 +147,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete an article
       tags:
       - articles
@@ -152,6 +156,12 @@ paths:
       consumes:
       - application/json
       description: Returns articles of the authenticated user
+      parameters:
+      - description: Article ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -222,6 +232,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Update an article
       tags:
       - articles

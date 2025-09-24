@@ -2,14 +2,16 @@ package repository
 
 import (
 	"fmt"
+
 	_ "github.com/lib/pq"
+
 	// "myasd/config"
 	"myasd/internal/models"
 )
 
 func (r *RepositoryStruct) GetAllArticles(userID int) ([]models.Article, error) {
 	var input []models.Article
-	query := `select id, name, content, created_at from articles where user_id=$1`
+	query := `select id, name, content, created_at from articles where user_id=$1 and deleted_at IS NULL`
 	err := r.db.Select(&input, query, userID)
 	if err != nil {
 		return []models.Article{}, r.translateError(err)
@@ -26,17 +28,17 @@ func (r *RepositoryStruct) CreateArticle(input models.Article) error {
 	return nil
 }
 
-func (r *RepositoryStruct) GetArticleByID(id int) (models.Article, error) {
+func (r *RepositoryStruct) GetArticleByID(userID int, articleID int) (models.Article, error) {
 	var article models.Article
 	const query = `SELECT id, 
-       title, 
-       description, 
+       name,
+       content,
        user_id,
        created_at
 					FROM articles 
-					WHERE deleted_at IS NULL AND id=$1`
+					WHERE deleted_at IS NULL AND id=$1 and user_id=$2`
 
-	err := r.db.Get(&article, query, id)
+	err := r.db.Get(&article, query, articleID, userID)
 	if err != nil {
 		return models.Article{}, r.translateError(err)
 	}
@@ -80,10 +82,10 @@ func (r *RepositoryStruct) PatchArticle(id int, articleID string, updates map[st
 	return nil
 }
 
-func (r *RepositoryStruct) DeleteArticle(id int, articleID string) error {
-	query := "UPDATE articles SET deleted_at = NOW() WHERE id = $1"
+func (r *RepositoryStruct) DeleteArticle(userID int, articleID string) error {
+	query := "UPDATE articles SET deleted_at = NOW() WHERE id = $1 AND user_id = $2"
 
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.Exec(query, articleID, userID)
 	if err != nil {
 		return r.translateError(err)
 	}

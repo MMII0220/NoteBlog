@@ -16,7 +16,7 @@ type ServiceI interface {
 	// Articles Methods
 	GetAllArticles(userID int) ([]models.Article, error)
 	CreateArticle(input models.Article) error
-	GetArticleByID(id int, articleID string) (models.Article, error)
+	GetArticleByID(userID int, articleID int) (models.Article, error)
 	PatchArticle(userID int, articleID string, updates map[string]interface{}) error
-	DeleteArticle(id int, articleID string) error
+	DeleteArticle(userID int, articleID string) error
 }
